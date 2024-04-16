@@ -1,10 +1,11 @@
 const nedb = require("nedb");
+const path = require("path");
 const bcrypt = require("bcrypt");
 const saltrounds = 10;
 
 class UserDao {
     constructor() {
-        this.db = new nedb();
+        this.db = new nedb({filename: path.join(__dirname, '/users.db'), autoload: true});
     }
     getUsers() {
         return new Promise((resolve, reject) => {
@@ -41,8 +42,8 @@ class UserDao {
     }
     findUserByEmail(email, cb) {
         this.db.find({'email':email}, function (err, entries) {
-            if (err) {console.warn(err); return cb(null, null)
-            } else if (entries.length == 0) {
+            if (err) {console.warn(err); return cb(null, null)} 
+            else if (entries.length == 0) {
                 return cb(null, null);
             } else {
                 return cb(null, entries[0]);

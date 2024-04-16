@@ -18,8 +18,7 @@ exports.login = function(req, res, next) {
 
         bcrypt.compare(password, result.password, function (err, response) {
             if (response) {
-                let payload = { id:response._id};
-
+                let payload = { _id : result._id};
                 let accessToken = jwt.sign(payload, process.env.SECRET_ACCESS_TOKEN, {expiresIn: 600});
                 res.cookie("jwt", accessToken);
                 next();
@@ -33,7 +32,7 @@ exports.login = function(req, res, next) {
 }
 
 exports.verify = function(req, res, next) {
-    let accessToken = req.cookie.jwt;
+    let accessToken = req.cookies.jwt;
     if (!accessToken) {
         return res.status(403).send();
     }

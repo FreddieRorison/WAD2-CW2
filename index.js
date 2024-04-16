@@ -2,11 +2,11 @@ const express = require('express')
 const app = express()
 require("dotenv").config();
 
-app.use(express.json());
-app.use(express.urlencoded({extended:true}))
-
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+
+app.use(express.json());
+app.use(express.urlencoded({extended:true}))
 
 const path = require('path');
 const public = path.join(__dirname,'public');
