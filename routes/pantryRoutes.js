@@ -12,7 +12,7 @@ router.get('/home', verify, controller.user_home);
 router.get('/about', controller.show_about);
 router.get('/contact', controller.show_contact);
 router.get('/locations', controller.show_locations);
-router.get('/donate', controller.show_donate)
+router.get('/donate', verify, controller.show_donate)
 
 // Post Routes
 router.post('/register', controller.handle_register);

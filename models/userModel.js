@@ -7,13 +7,36 @@ class UserDao {
     constructor() {
         this.db = new nedb({filename: path.join(__dirname, '/users.db'), autoload: true});
     }
-    getUsers() {
-        return new Promise((resolve, reject) => {
-            this.db.find({}, function(err, entries) {
-                if (err) {console.warn(err);reject("Error");}
-                resolve(entries);
-            })
+    init() {
+        this.db.insert({
+            name: "Glasgow Pantry 1",
+            email: "email@email.com",
+            location: "glasgow",
+            password: "who cares",
+            accounttype: 'pantry',
         })
+        this.db.insert({
+            name: "Glasgow Pantry 2",
+            email: "email@email.com",
+            location: "glasgow",
+            password: "who cares",
+            accounttype: 'pantry',
+        })
+        this.db.insert({
+            name: "Glasgow Pantry 3",
+            email: "email@email.com",
+            location: "glasgow",
+            password: "who cares",
+            accounttype: 'pantry',
+        })
+    }
+    getUsers(type) {
+        return new Promise((resolve, reject) => {
+            this.db.find({accounttype:type}, function(err, entries) {
+                if (err) {console.warn(err);reject(err);}
+                return resolve(entries);
+            })
+        })  
     }
     addUser(firstname, surname, dob, email, password) {
         var that = this;
@@ -23,7 +46,23 @@ class UserDao {
                 surname: surname,
                 email: email,
                 dob: dob,
-                password: hash
+                password: hash,
+                accounttype: 'user',
+            }
+            that.db.insert(user, function(err, doc) {
+                if (err) {console.warn(err);}
+            })
+        })
+    }
+    addPantry(name, email, location, password) {
+        var that = this;
+        bcrypt.hash(password, saltrounds).then(function(hash) {
+            var user = {
+                name: name,
+                email: email,
+                location: location,
+                password: hash,
+                accounttype: 'pantry',
             }
             that.db.insert(user, function(err, doc) {
                 if (err) {console.warn(err);}
@@ -52,5 +91,6 @@ class UserDao {
     }
 }
 const dao = new UserDao();
+//dao.init();
 
 module.exports = dao;

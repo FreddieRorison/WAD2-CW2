@@ -1,7 +1,7 @@
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
-const { get } = require('http');
+const typesModel = require('../models/typesModel')
 
 exports.show_home = function(req, res) {
     getUser(req.cookies.jwt, function(err, result) {
@@ -48,9 +48,6 @@ exports.show_contact = function (req, res) {
         });
     })
 }
-exports.show_donate = function (req, res) {
-    
-}
 exports.show_locations = function (req, res) {
     getUser(req.cookies.jwt, function(err, result) {
         let flag = true;
@@ -60,6 +57,22 @@ exports.show_locations = function (req, res) {
         });
     })
 }
+exports.show_donate = function (req, res) {
+    userModel.getUsers('pantry')
+    .then((pantries) => {
+        typesModel.getTypes(function(err, types) {
+            res.render('userDonate', {
+                flag: false,
+                types: types,
+                pantries: pantries,
+            })
+        })
+    })
+    .catch((err) => {
+        console.log("REJECTED ", err)
+    });
+}
+
 
 exports.handle_register = function(req, res) {
     const firstname = req.body.firstname;
@@ -79,20 +92,24 @@ exports.handle_register = function(req, res) {
 
     res.redirect('/login');
 }
-
 exports.handle_login = function(req, res) {
     res.redirect('/home');
 }
-
 exports.user_home = function(req, res) {
     getUser(req.cookies.jwt, function(err, user) {
         if (!user) {
             return res.status(500).send("Error");
         }
+        if (user.accounttype == 'pantry') {
+            return res.redirect('pantryhome');
+        }
         res.render('userHome', {
             firstname: user.firstname,
         });
     })
+}
+exports.handle_donate = function(req, res) {
+    
 }
 
 function getUser(token, cb) {
