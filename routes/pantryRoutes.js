@@ -12,9 +12,11 @@ router.get('/home', verify, controller.user_home);
 router.get('/about', controller.show_about);
 router.get('/contact', controller.show_contact);
 router.get('/locations', controller.show_locations);
-router.get('/donate', verify, controller.show_donate)
+router.get('/donate', verify, controller.show_donate);
+router.get('/history', verify, controller.show_user_history);
 
 // Post Routes
 router.post('/register', controller.handle_register);
-router.post('/login', login, controller.handle_login)
+router.post('/login', login, controller.handle_login);
+router.post('/donate', verify, controller.handle_donate);
 module.exports = router;

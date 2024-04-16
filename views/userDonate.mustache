@@ -12,22 +12,22 @@
             <h1 class="display-6 mt-5 mb-5">Donate</h1>
             <form action="/donate" method="POST">
                 <label for="type" class="form-label">Type</label>
-                <select name="type" class="form-select mb-3" aria-label="Select Type" required>
+                <select name="typeid" class="form-select mb-3" aria-label="Select Type" required>
                     {{#types}}
                       <option value="{{_id}}">{{name}}</option>
                     {{/types}}
                   </select>
                 <div class="mb-3">
                     <label for="Qauntity" class="form-label">Qauntity</label>
-                    <input type="number" class="form-control mb-3" id="Qauntity" placeholder="Qauntity" required>
+                    <input type="number" class="form-control mb-3" id="Qauntity" name="quantity" placeholder="Qauntity" required>
                 </div>
                 <div class="mb-3">
                     <label for="harvestDate" class="form-label">Harvest Date</label>
-                    <input type="date" class="form-control mb-3" id="harvestDate" placeholder="Harvest Date" required>
+                    <input type="date" class="form-control mb-3" id="harvestDate" name="harvestdate" placeholder="Harvest Date" required>
                 </div>
                 <label for="pantry" class="form-label">Preferred Pantry</label>
-                <select name="pantry" class="form-select mb-3" aria-label="Preferred Pantry" required>
-                    <option value="1">Any</option>
+                <select name="pantryid" class="form-select mb-3" aria-label="Preferred Pantry" required>
+                    <option value="any">Any</option>
                 {{#pantries}}
                     <option value="{{_id}}">{{name}}</option>
                 {{/pantries}}
