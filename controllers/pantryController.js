@@ -1,8 +1,11 @@
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const emailvalidator = require('email-validator');
 const userModel = require('../models/userModel');
 const typesModel = require('../models/typesModel');
 const donationModel = require('../models/donationModel');
+
+const passwordRegEx =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&^])[A-Za-z\d@.#$!%*?&]{8,28}$/;
 
 exports.show_home = function(req, res) {
     getUser(req.cookies.jwt, function(err, result) {
@@ -61,13 +64,15 @@ exports.show_locations = function (req, res) {
 exports.show_donate = function (req, res) {
     userModel.getUsers('pantry')
     .then((pantries) => {
-        typesModel.getTypes(function(err, types) {
+        typesModel.getTypes()
+        .then((types) => {
             res.render('userDonate', {
                 loggedIn: false,
                 types: types,
                 pantries: pantries,
             })
         })
+        
     })
     .catch((err) => {
         console.log("REJECTED ", err)
@@ -320,14 +325,27 @@ exports.handle_register = function(req, res) {
     let DoB = new Date(req.body.dob);
     const email = req.body.email;
     const password = req.body.password;
-
-    // Validation Goes Here
+    var message = '';
 
     if (!firstname || !surname || !req.body.dob || !email || !password) {
-        res.status(401).send("Missing Form Data!");
-        return;
+        message = message + "Missing Form Data; ";
     }
+    var date = new Date();
+    var date = date.setFullYear(date.getFullYear()-13)
 
+    if (date<DoB) {
+        message = message + " Not Old Enough; "
+    }
+    if (!emailvalidator.validate(email)) {
+        message = message + "Invalid email; ";
+    }
+    if (!passwordRegEx.test(password)) {
+        message = message + "Password Requirements not met; ";
+    }
+    
+    if (message) {
+        return res.status(403).send(message);
+    }
     userModel.addUser(firstname, surname, DoB.toISOString(), email, password);
 
     res.redirect('/login');
@@ -361,12 +379,34 @@ exports.handle_donate = function(req, res) {
         const quantity = req.body.quantity;
         const harvestDate = new Date(req.body.harvestdate);
         const pantryid = req.body.pantryid;
+        var message;
 
         if (!typeid || !userid || !quantity || !req.body.harvestdate || !pantryid ) {
-            return res.status(401).send("Form Data Missing");
+            message = message + "Missing form data; ";
         }
+        var date = new Date();
+        if (date<harvestDate) {
+            message = message + "Harvest cant be in future; ";
+        }
+        getUser(userid, function(err, user) {
+            if (!user) {
+                message = message + "User Does not exist; ";
+            }
+        })
+        getUser(pantryid, function(err, pantry) {
+            if (!pantry) {
+                message = message + "Pantry Does not exist; ";
+            }
+        })
+        typesModel.getTypeById(typeid, function(err, type) {
+            if (!type) {
+                message = message + "Type does not exist; ";
+            }
+        })
 
-        // Validation Here
+        if (message) {
+            return res.status(403).send(message);
+        }
 
         var status;
 
@@ -425,10 +465,21 @@ exports.handle_add_pantry = function(req, res) {
     const location = req.body.location;
     const email = req.body.email;
     const password = req.body.password;
+    var message;
 
     if (!name || !location || !email || !password) {
         res.status(401).send("Missing Form Data!");
         return;
+    }
+    if (!emailvalidator.validate(email)) {
+        message = message + "Invalid email; ";
+    }
+    if (!passwordRegEx.test(password)) {
+        message = message + "Password Requirements not met; ";
+    }
+
+    if (message) {
+        return res.status(403).send(message);
     }
 
     userModel.addPantry(name, email, location, password);
@@ -448,6 +499,9 @@ exports.handle_add_type = function(req, res) {
     var perishable = true;
 
     // Validation Here
+    if (!name || !daterange) {
+        return res.status(403).send("Missing Form Data");
+    }
 
     if (daterange == 0) {
         perishable = false;
