@@ -27,11 +27,13 @@ class typeDAO {
             daterange: "365",
         })
     }
-    getTypes(cb) {
-        this.db.find({}, function (err, entries) {
-            if (err) {console.warn(err);return cb(null, null);}
-            return cb(null, entries);
-        })
+    getTypes() {
+        return new Promise((resolve, reject) => {
+            this.db.find({}, function (err, entries) {
+                if (err) {console.warn(err);reject();}
+                resolve(entries);
+            })
+        }) 
     }
     addType(name, perishable, daterange) {
         var doc = {

@@ -24,6 +24,8 @@ router.get('/adminpantries', verify, controller.show_admin_pantries);
 router.get('/adminaddpantry', verify, controller.show_add_pantry);
 router.get('/logout', logout, controller.handle_user_logout);
 router.get('/adminuser', verify, controller.show_admin_users);
+router.get('/admintypes', verify, controller.show_admin_types)
+router.get('/adminaddtype', verify, controller.show_add_type);
 
 // Post Routes
 router.post('/register', controller.handle_register);
@@ -34,4 +36,6 @@ router.post('/confirmDelivery', verify, controller.handle_delivery_status);
 router.post('/acceptMarketItem', verify, controller.handle_market_accept);
 router.post('/addPantry', verify, controller.handle_add_pantry);
 router.post('/deleteUser', verify, controller.handle_delete_user);
+router.post('/addType', verify, controller.handle_add_type);
+router.post('/deleteType', verify, controller.handle_delete_type);
 module.exports = router;

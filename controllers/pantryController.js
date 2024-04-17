@@ -299,6 +299,20 @@ exports.show_admin_users = function(req, res) {
         })
     })
 }
+exports.show_admin_types = function(req, res) {
+    typesModel.getTypes()
+    .then((types) => {
+        res.render('adminTypes', {
+            rows: types,
+            loggedIn: false,
+        })
+    })
+}
+exports.show_add_type = function(req, res) {
+    res.render('adminAddType', {
+        loggedIn: false
+    })
+}
 
 exports.handle_register = function(req, res) {
     const firstname = req.body.firstname;
@@ -427,6 +441,28 @@ exports.handle_delete_user = function(req, res) {
 }
 exports.handle_user_logout = function(req, res) {
     res.redirect('/login');
+}
+exports.handle_add_type = function(req, res) {
+    const name = req.body.name;
+    const daterange = req.body.daterange;
+    var perishable = true;
+
+    // Validation Here
+
+    if (daterange == 0) {
+        perishable = false;
+    }
+
+    typesModel.addType(name, perishable, daterange);
+    
+    res.redirect('/admintypes');
+}
+exports.handle_delete_type = function(req, res) {
+    const choice = req.body.choice;
+
+    typesModel.removeType(choice);
+
+    res.redirect('/admintypes');
 }
 
 function getUser(token, cb) {
