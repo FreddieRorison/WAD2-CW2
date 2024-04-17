@@ -159,6 +159,114 @@ exports.show_pantry_requests = function(req, res) {
             })
         })
 }
+exports.show_pantry_deliveries = function(req, res) {
+    getUser(req.cookies.jwt, function (err, user) {
+        const pantryId = user._id;
+        let info = [];
+        donationModel.getDonationsByPantryStatus(pantryId, 'accepted')
+        .then((donations) => {
+            const promises = donations.map((donation) => {
+                return new Promise((resolve, reject) => {
+                    typesModel.getTypeById(donation.typeid, function(err, type) {
+                        const typeName = type.name;
+                        let harvest = new Date(donation.harvestDate);
+                        harvest.setDate(harvest.getDate()+type.daterange);
+                        const useby = harvest.toISOString().split("T")[0];
+                        userModel.findUserById(donation.pantryid, function(err, user) {
+                            const pantryName = user.name;
+                            info.push({
+                                type: typeName,
+                                useby: useby,
+                                pantryName: pantryName,
+                                _id: donation._id,
+                                quantity: donation.quantity,
+                            })
+                            resolve();
+                        })
+                    })
+                    
+                })
+            })
+    
+                Promise.all(promises)
+                .then(() => {
+                    res.render('pantryDeliveries', {
+                        rows: info,
+                        flag: false,
+                    })
+                })
+            })
+        })
+}
+exports.show_pantry_history = function(req, res) {
+    getUser(req.cookies.jwt, function (err, user) {
+        const pantryId = user._id;
+        let info = [];
+        donationModel.getDonationBypantry(pantryId)
+        .then((donations) => {
+            const promises = donations.map((donation) => {
+                return new Promise((resolve, reject) => {
+                    typesModel.getTypeById(donation.typeid, function(err, type) {
+                        const typeName = type.name;
+                        let harvest = new Date(donation.harvestDate);
+                        harvest.setDate(harvest.getDate()+type.daterange);
+                        const useby = harvest.toISOString().split("T")[0];
+                        info.push({
+                            type: typeName,
+                            useby: useby,
+                            delivered: donation.delivered,
+                            _id: donation._id,
+                            quantity: donation.quantity,
+                        })
+                        resolve();
+                    })
+                    
+                })
+            })
+    
+                Promise.all(promises)
+                .then(() => {
+                    res.render('pantryHistory', {
+                        rows: info,
+                        flag: false,
+                    })
+                })
+            })
+        })
+}
+exports.show_pantry_market = function(req, res) {
+    let info = [];
+    donationModel.getAvailable()
+    .then((donations) => {
+        const promises = donations.map((donation) => {
+            return new Promise((resolve, reject) => {
+                typesModel.getTypeById(donation.typeid, function(err, type) {
+                    const typeName = type.name;
+                    let harvest = new Date(donation.harvestDate);
+                    harvest.setDate(harvest.getDate()+type.daterange);
+                    const useby = harvest.toISOString().split("T")[0];
+                    info.push({
+                        type: typeName,
+                        useby: useby,
+                        delivered: donation.delivered,
+                        _id: donation._id,
+                        quantity: donation.quantity,
+                    })
+                    resolve();
+                })
+                
+            })
+        })
+
+            Promise.all(promises)
+            .then(() => {
+                res.render('pantryMarket', {
+                    rows: info,
+                    flag: false,
+                })
+            })
+        })
+}
 
 exports.handle_register = function(req, res) {
     const firstname = req.body.firstname;
@@ -226,7 +334,42 @@ exports.handle_donate = function(req, res) {
     })
 }
 exports.handle_request_status = function(req, res) {
-    
+    getUser(req.cookies.jwt, function(err, user) {
+        const userId = user._id;
+
+        var split = req.body.choice.split(";");
+        let status;
+
+        if (!split || !userId) {
+            return res.status(403).send("Missing Data");
+        }
+
+        if (split[0] == "accepted") {
+            status = 'accepted';
+        } else {
+            status = 'available';
+        }
+
+        donationModel.changeStatus(split[1], status);
+        res.redirect('/pantryrequests');
+    })
+}
+exports.handle_delivery_status = function(req, res) {
+    getUser(req.cookies.jwt, function(err, user) {
+        const userId = user._id;
+        const donationId = req.body.id;
+
+        if (!userId || !donationId) {
+            return res.status(403).send("Missing Data");
+        } 
+        donationModel.markDelivered(donationId);
+        res.redirect('/pantrydeliveries');
+    })
+}
+exports.handle_market_accept = function(req, res) {
+    getUser(req.cookies.jwt, function(err, user) {
+        
+    })
 }
 
 function getUser(token, cb) {

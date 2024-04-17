@@ -9,7 +9,7 @@
 
       <div class="container mt-5">
         <div class="container">
-            <h1 class="display-6 pt-5">Incoming Requests</h1>
+            <h1 class="display-6 pt-5">Incoming Deliveries</h1>
             <table class="table mt-5">
                 <tbody>
                     <thead>
@@ -26,7 +26,7 @@
                             <td>{{type}}</td>
                             <td>{{quantity}}</td>
                             <td>{{useby}}</td>
-                            <td><form method="POST" action="/reqStatus"><button type="submit" name="choice" value="accept;{{_id}}" class="btn btn-success">Accept</button><button type="submit" name="choice" value="decline;{{_id}}" class="btn btn-danger ms-2">Decline</button></form></td>
+                            <td><form method="POST" action="/confirmDelivery"><button type="submit" name="id" value="{{_id}}" class="btn btn-success">Confirm Delivery</button></form></td>
                         </tr>
                     {{/rows}}
                     </tbody>

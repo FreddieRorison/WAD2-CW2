@@ -21,12 +21,15 @@ class donationDAO {
             if (err) {console.warn(err);}
         })
     }
-    getAvailable(cb) {
-        let date = new date();
+    getAvailable() {
+        return new Promise((resolve, reject) => {
+        let date = new Date();
         this.db.find({status:'available'}, function(err, donations) {
-            if (err) {console.warn(err);return cb(null, null)}
-            return cb(null, donations);
+            if (err) {console.warn(err);reject();}
+            resolve(donations);
         })
+        })
+        
     }
     getDonationBypantry(id) {
         return new Promise((resolve, reject) => {
@@ -38,7 +41,7 @@ class donationDAO {
     }
     getDonationsByPantryStatus(id, status) {
         return new Promise((resolve, reject) => {
-            this.db.find({pantryid: id, status: status}, function(err, donations) {
+            this.db.find({pantryid: id, status: status, delivered: 'false'}, function(err, donations) {
                 if (err) {console.warn(err);reject(err)}
                 resolve(donations);
             })
@@ -52,6 +55,12 @@ class donationDAO {
             })
         })
         
+    }
+    changeStatus(id, status) {
+        this.db.update({_id:id}, {$set: {status: status}},{});
+    }
+    markDelivered(id, status) {
+        this.db.update({_id:id}, {$set: {delivered: 'true'}},{});
     }
     
 }

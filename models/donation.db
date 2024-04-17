@@ -1,2 +1,2 @@
-{"typeid":"72aLPpHzaPYxPDPV","userid":"hX7GEcLyZjtAgKoc","quantity":"8","harvestDate":"2024-04-11","pantryid":"QDOxVgCLg5xJh1yA","delivered":"false","status":"pending","_id":"BlleyAnWS6lQemhz"}
-{"typeid":"72aLPpHzaPYxPDPV","userid":"hX7GEcLyZjtAgKoc","quantity":"8","harvestDate":"2024-04-02","pantryid":"TyYj21ZsFk6lE8uP","delivered":"false","_id":"dVDnbO1mgPca0soI"}
+{"typeid":"72aLPpHzaPYxPDPV","userid":"hX7GEcLyZjtAgKoc","quantity":"8","harvestDate":"2024-04-11","pantryid":"QDOxVgCLg5xJh1yA","delivered":"true","status":"accepted","_id":"BlleyAnWS6lQemhz"}
+{"typeid":"72aLPpHzaPYxPDPV","userid":"hX7GEcLyZjtAgKoc","quantity":"8","harvestDate":"2024-04-02","pantryid":"TyYj21ZsFk6lE8uP","delivered":"false","status":"available","_id":"dVDnbO1mgPca0soI"}
