@@ -131,17 +131,20 @@ exports.show_pantry_requests = function(req, res) {
                     typesModel.getTypeById(donation.typeid, function(err, type) {
                         const typeName = type.name;
                         let harvest = new Date(donation.harvestDate);
-                        harvest.setDate(harvest.getDate()+type.daterange);
+                        harvest.setDate(harvest.getDate()+parseInt(type.daterange));
                         const useby = harvest.toISOString().split("T")[0];
                         userModel.findUserById(donation.pantryid, function(err, user) {
                             const pantryName = user.name;
-                            info.push({
-                                type: typeName,
-                                useby: useby,
-                                pantryName: pantryName,
-                                _id: donation._id,
-                                quantity: donation.quantity,
-                            })
+                            let today = new Date();
+                            if (harvest>today) {
+                                info.push({
+                                    type: typeName,
+                                    useby: useby,
+                                    pantryName: pantryName,
+                                    _id: donation._id,
+                                    quantity: donation.quantity,
+                                })
+                            }
                             resolve();
                         })
                     })
@@ -170,17 +173,20 @@ exports.show_pantry_deliveries = function(req, res) {
                     typesModel.getTypeById(donation.typeid, function(err, type) {
                         const typeName = type.name;
                         let harvest = new Date(donation.harvestDate);
-                        harvest.setDate(harvest.getDate()+type.daterange);
+                        harvest.setDate(harvest.getDate()+parseInt(type.daterange));
                         const useby = harvest.toISOString().split("T")[0];
                         userModel.findUserById(donation.pantryid, function(err, user) {
                             const pantryName = user.name;
-                            info.push({
-                                type: typeName,
-                                useby: useby,
-                                pantryName: pantryName,
-                                _id: donation._id,
-                                quantity: donation.quantity,
-                            })
+                            let today = new Date();
+                            if (harvest>today){
+                                info.push({
+                                    type: typeName,
+                                    useby: useby,
+                                    pantryName: pantryName,
+                                    _id: donation._id,
+                                    quantity: donation.quantity,
+                                })
+                            }
                             resolve();
                         })
                     })
@@ -209,15 +215,15 @@ exports.show_pantry_history = function(req, res) {
                     typesModel.getTypeById(donation.typeid, function(err, type) {
                         const typeName = type.name;
                         let harvest = new Date(donation.harvestDate);
-                        harvest.setDate(harvest.getDate()+type.daterange);
+                        harvest.setDate(harvest.getDate()+parseInt(type.daterange));
                         const useby = harvest.toISOString().split("T")[0];
-                        info.push({
-                            type: typeName,
-                            useby: useby,
-                            delivered: donation.delivered,
-                            _id: donation._id,
-                            quantity: donation.quantity,
-                        })
+                            info.push({
+                                type: typeName,
+                                useby: useby,
+                                delivered: donation.delivered,
+                                _id: donation._id,
+                                quantity: donation.quantity,
+                            }) 
                         resolve();
                     })
                     
@@ -243,15 +249,18 @@ exports.show_pantry_market = function(req, res) {
                 typesModel.getTypeById(donation.typeid, function(err, type) {
                     const typeName = type.name;
                     let harvest = new Date(donation.harvestDate);
-                    harvest.setDate(harvest.getDate()+type.daterange);
+                    harvest.setDate(harvest.getDate()+parseInt(type.daterange));
                     const useby = harvest.toISOString().split("T")[0];
-                    info.push({
-                        type: typeName,
-                        useby: useby,
-                        delivered: donation.delivered,
-                        _id: donation._id,
-                        quantity: donation.quantity,
-                    })
+                    let today = new Date();
+                    if (harvest>today){
+                        info.push({
+                            type: typeName,
+                            useby: useby,
+                            delivered: donation.delivered,
+                            _id: donation._id,
+                            quantity: donation.quantity,
+                        })
+                    }
                     resolve();
                 })
                 
@@ -368,8 +377,11 @@ exports.handle_delivery_status = function(req, res) {
 }
 exports.handle_market_accept = function(req, res) {
     getUser(req.cookies.jwt, function(err, user) {
-        
+        const donationId = req.body.choice;
+        donationModel.claim(user._id, donationId);
+        res.redirect('/pantryMarket');
     })
+    
 }
 
 function getUser(token, cb) {

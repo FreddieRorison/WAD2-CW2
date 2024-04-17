@@ -62,6 +62,9 @@ class donationDAO {
     markDelivered(id, status) {
         this.db.update({_id:id}, {$set: {delivered: 'true'}},{});
     }
+    claim(pantryId, donationId) {
+        this.db.update({_id:donationId, status:'available'}, {$set: {pantryid: pantryId, status:'accepted'}},{});
+    }
     
 }
 const dao = new donationDAO();
