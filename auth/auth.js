@@ -44,3 +44,8 @@ exports.verify = function(req, res, next) {
         res.status(401).send();
     }
 }
+
+exports.logout = function(req, res, next) {
+    res.cookie("jwt", null);
+    next();
+}

@@ -276,6 +276,29 @@ exports.show_pantry_market = function(req, res) {
             })
         })
 }
+exports.show_admin_pantries = function(req, res) {
+    userModel.getUsers('pantry')
+    .then((pantries) => {
+        res.render('adminPantries', {
+            rows: pantries,
+            loggedIn: false,
+        })
+    })
+}
+exports.show_add_pantry = function(req, res) {
+    res.render('adminNewPantry', {
+        loggedIn: false,
+    })
+}
+exports.show_admin_users = function(req, res) {
+    userModel.getUsers('user')
+    .then((pantries) => {
+        res.render('adminUsers', {
+            rows: pantries,
+            loggedIn: false,
+        })
+    })
+}
 
 exports.handle_register = function(req, res) {
     const firstname = req.body.firstname;
@@ -382,6 +405,28 @@ exports.handle_market_accept = function(req, res) {
         res.redirect('/pantryMarket');
     })
     
+}
+exports.handle_add_pantry = function(req, res) {
+    const name = req.body.name;
+    const location = req.body.location;
+    const email = req.body.email;
+    const password = req.body.password;
+
+    if (!name || !location || !email || !password) {
+        res.status(401).send("Missing Form Data!");
+        return;
+    }
+
+    userModel.addPantry(name, email, location, password);
+    res.redirect('/adminpantries');
+}
+exports.handle_delete_user = function(req, res) {
+    const choice = req.body.choice;
+    userModel.deleteUser(choice);
+    res.status(200).send("User Deleted");
+}
+exports.handle_user_logout = function(req, res) {
+    res.redirect('/login');
 }
 
 function getUser(token, cb) {

@@ -54,6 +54,9 @@ class UserDao {
             })
         })
     }
+    deleteUser(id) {
+        this.db.remove({_id:id});
+    }
     addPantry(name, email, location, password) {
         var that = this;
         bcrypt.hash(password, saltrounds).then(function(hash) {

@@ -2,4 +2,7 @@
 {"name":"Glasgow Pantry 3","email":"email@email.com","location":"glasgow","password":"who cares","accounttype":"pantry","_id":"TyYj21ZsFk6lE8uP"}
 {"name":"Glasgow Pantry 1","email":"email@email.com","location":"glasgow","password":"who cares","accounttype":"pantry","_id":"UH0YaIr4K4VqhX9n"}
 {"firstname":"Freddie","surname":"Rorison","email":"freddieror@gmail.com","dob":"2024-04-11T00:00:00.000Z","password":"$2b$10$44g/XQFGUBiYN3CimWhJ8.UCOfbCSK8hBS5iaq5O5oEFSCxQWoYsm","accounttype":"user","_id":"hX7GEcLyZjtAgKoc"}
+{"name":"Poo Poo","email":"poop@class.com","location":"123","password":"$2b$10$tRgZF.pItcOrZhPI4dnPcubNq7DtyrKJ0AWc256PtZhZaS1BKMcRi","accounttype":"pantry","_id":"uFBt7iUOLTP1fkSP"}
 {"firstname":"Bob","surname":"Pancake","email":"BobPancake@gmail.com","dob":"2003-01-02T00:00:00.000Z","password":"$2b$10$Q4EZixEJcckhTJHDVYnHteejn3/3En9snHaxzodJPGAIihqiJE39a","accounttype":"user","_id":"uROQ5WQtHaGAvRnX"}
+{"$$deleted":true,"_id":"hX7GEcLyZjtAgKoc"}
+{"firstname":"Freddie","surname":"Rorison","email":"freddieror@gmail.com","dob":"2024-04-10T00:00:00.000Z","password":"$2b$10$H4J9bMBliDelu1o3SeI35ORSjxXZTJsOYIcKJ7DoNYcNBMyOM7xeO","accounttype":"user","_id":"zPM9qu4FzYGJk3vG"}
