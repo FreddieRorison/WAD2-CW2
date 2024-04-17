@@ -9,7 +9,7 @@ exports.show_home = function(req, res) {
         let flag = true;
         if (result) {flag = false}
         res.render('index', {
-            flag: flag,
+            loggedIn: flag,
         });
     })
 }
@@ -36,7 +36,7 @@ exports.show_about = function(req, res) {
         let flag = true;
         if (result) {flag = false}
         res.render('about', {
-            flag: flag,
+            loggedIn: flag,
         });
     })
 }
@@ -45,7 +45,7 @@ exports.show_contact = function (req, res) {
         let flag = true;
         if (result) {flag = false}
         res.render('contact', {
-            flag: flag,
+            loggedIn: flag,
         });
     })
 }
@@ -54,7 +54,7 @@ exports.show_locations = function (req, res) {
         let flag = true;
         if (result) {flag = false}
         res.render('pantries', {
-            flag: flag,
+            loggedIn: flag,
         });
     })
 }
@@ -63,7 +63,7 @@ exports.show_donate = function (req, res) {
     .then((pantries) => {
         typesModel.getTypes(function(err, types) {
             res.render('userDonate', {
-                flag: false,
+                loggedIn: false,
                 types: types,
                 pantries: pantries,
             })
@@ -104,21 +104,61 @@ exports.show_user_history = function (req, res) {
             })
         })
 
-        Promise.all(promises)
-        .then(() => {
-            console.log(info);
-            res.render('userHistory', {
-                rows: info,
-                flag: false,
+            Promise.all(promises)
+            .then(() => {
+                res.render('userHistory', {
+                    rows: info,
+                    flag: false,
+                })
             })
         })
-
-        
-        
-    })
     })
 }
-
+exports.show_pantry_home = function (req, res) {
+        res.render('pantryHome', {
+            loggedIn: false,
+            requestStat: 8
+        })
+}
+exports.show_pantry_requests = function(req, res) {
+    getUser(req.cookies.jwt, function (err, user) {
+        const pantryId = user._id;
+        let info = [];
+        donationModel.getDonationsByPantryStatus(pantryId, 'pending')
+        .then((donations) => {
+            const promises = donations.map((donation) => {
+                return new Promise((resolve, reject) => {
+                    typesModel.getTypeById(donation.typeid, function(err, type) {
+                        const typeName = type.name;
+                        let harvest = new Date(donation.harvestDate);
+                        harvest.setDate(harvest.getDate()+type.daterange);
+                        const useby = harvest.toISOString().split("T")[0];
+                        userModel.findUserById(donation.pantryid, function(err, user) {
+                            const pantryName = user.name;
+                            info.push({
+                                type: typeName,
+                                useby: useby,
+                                pantryName: pantryName,
+                                _id: donation._id,
+                                quantity: donation.quantity,
+                            })
+                            resolve();
+                        })
+                    })
+                    
+                })
+            })
+    
+                Promise.all(promises)
+                .then(() => {
+                    res.render('pantryRequests', {
+                        rows: info,
+                        flag: false,
+                    })
+                })
+            })
+        })
+}
 
 exports.handle_register = function(req, res) {
     const firstname = req.body.firstname;
@@ -181,10 +221,12 @@ exports.handle_donate = function(req, res) {
         } else {
             status = 'pending';
         }
-        console.log(status);
         donationModel.addDonation(typeid, userid, quantity, harvestDate.toISOString().split("T")[0], pantryid, status);
         res.redirect('/home');
     })
+}
+exports.handle_request_status = function(req, res) {
+    
 }
 
 function getUser(token, cb) {

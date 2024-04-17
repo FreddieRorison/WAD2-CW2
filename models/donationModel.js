@@ -14,6 +14,8 @@ class donationDAO {
             quantity: quantity,
             harvestDate: harvestDate,
             pantryid: pantryId,
+            delivered: 'false',
+            status: 'pending',
         }
         this.db.insert(doc, function (err, doc) {
             if (err) {console.warn(err);}
@@ -33,7 +35,14 @@ class donationDAO {
                 resolve(donations);
             })
         })
-        
+    }
+    getDonationsByPantryStatus(id, status) {
+        return new Promise((resolve, reject) => {
+            this.db.find({pantryid: id, status: status}, function(err, donations) {
+                if (err) {console.warn(err);reject(err)}
+                resolve(donations);
+            })
+        })
     }
     getDonationsByUser(id) {
         return new Promise((resolve, reject) => {

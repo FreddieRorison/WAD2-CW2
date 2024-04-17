@@ -14,9 +14,12 @@ router.get('/contact', controller.show_contact);
 router.get('/locations', controller.show_locations);
 router.get('/donate', verify, controller.show_donate);
 router.get('/history', verify, controller.show_user_history);
+router.get('/pantryhome', verify, controller.show_pantry_home);
+router.get('/pantryrequests', verify, controller.show_pantry_requests);
 
 // Post Routes
 router.post('/register', controller.handle_register);
 router.post('/login', login, controller.handle_login);
 router.post('/donate', verify, controller.handle_donate);
+router.post('/reqStatus', verify, controller.handle_request_status);
 module.exports = router;
