@@ -17,7 +17,6 @@ router.get('/contact', controller.show_contact);
 router.get('/locations', controller.show_locations);
 router.get('/donate', verifyUser, controller.show_donate);
 router.get('/history', verifyUser, controller.show_user_history);
-router.get('/pantryhome', verifyUser, controller.show_pantry_home);
 router.get('/pantryrequests', verifyPantry, controller.show_pantry_requests);
 router.get('/pantrydeliveries', verifyPantry, controller.show_pantry_deliveries);
 router.get('/pantryhistory', verifyPantry, controller.show_pantry_history);
@@ -28,6 +27,7 @@ router.get('/logout', logout, controller.handle_user_logout);
 router.get('/adminuser', verifyAdmin, controller.show_admin_users);
 router.get('/admintypes', verifyAdmin, controller.show_admin_types)
 router.get('/adminaddtype', verifyAdmin, controller.show_add_type);
+router.get('/adminsupport', verifyAdmin, controller.show_admin_support)
 
 // Post Routes
 router.post('/register', controller.handle_register);
@@ -40,5 +40,7 @@ router.post('/addPantry', verifyAdmin, controller.handle_add_pantry);
 router.post('/deleteUser', verifyAdmin, controller.handle_delete_user);
 router.post('/addType', verifyAdmin, controller.handle_add_type);
 router.post('/deleteType', verifyAdmin, controller.handle_delete_type);
+router.post('/createTicket', controller.handle_create_ticket);
+router.post('/closeTicket', controller.handle_close_ticket);
 
 module.exports = router;

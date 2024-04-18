@@ -42,12 +42,12 @@ exports.verifyUser = function(req, res, next) {
         if (payload.accounttype == 'user') {
             next();
         } else if (payload.accounttype == 'pantry') {
-            res.redirect('/pantryhome');
-        } else {
-            res.redirect('/admintypes');
+            res.redirect('/pantryrequests');
+        } else if (payload.accounttype == 'admin') {
+            res.redirect('/adminuser');
         }
     } catch (e) {
-        res.status(401).send();
+        res.redirect('/login');
     }
 }
 
@@ -63,11 +63,11 @@ exports.verifyPantry = function(req, res, next) {
             next();
         } else if (payload.accounttype == 'user') {
             res.redirect('/home');
-        } else {
-            res.redirect('/admintypes');
+        } else if (payload.accounttype == 'admin') {
+            res.redirect('/adminuser');
         }
     } catch (e) {
-        res.status(401).send();
+        res.redirect('/login');
     }
 }
 
@@ -83,11 +83,11 @@ exports.verifyAdmin = function(req, res, next) {
             next();
         } else if (payload.accounttype == 'user') {
             res.redirect('/home');
-        } else {
-            res.redirect('/pantryhome');
+        } else if (payload.accounttype == 'pantry') {
+            res.redirect('/pantryrequests');
         }
     } catch (e) {
-        res.status(401).send();
+        res.redirect('/login');
     }
 }
 

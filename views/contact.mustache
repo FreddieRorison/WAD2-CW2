@@ -8,18 +8,18 @@
     <div class="container-md justify-content-center pt-5 mt-5">
         <h1 class="display-2 mb-4 text-center">Contact</h1>
         <h2 class=" display-6 text-center mb-5">Submit a ticket below and we will get back to you ASAP</a></h2>
-        <form action="/login" method="POST">
+        <form action="/createTicket" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control mb-3" id="email" placeholder="Enter Email" aria-describedby="emailHelp" required>
+                <input type="email" name="email" class="form-control mb-3" id="email" placeholder="Enter Email" aria-describedby="emailHelp" required>
             </div>
             <div class="mb-3">
                 <label for="Subject" class="form-label">Subject</label>
-                <input type="text" class="form-control mb-3" id="Subject" placeholder="Subject" required>
+                <input type="text" name="subject" class="form-control mb-3" id="Subject" placeholder="Subject" required>
             </div>
             <div class="mb-3">
                 <label for="textBody" class="form-label">Body</label>
-                <textarea class="form-control" id="textBody" rows="8" required></textarea>
+                <textarea class="form-control" name="body" id="textBody" rows="8" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary float-end">Submit</button>
         </form>

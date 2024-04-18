@@ -4,6 +4,7 @@ const emailvalidator = require('email-validator');
 const userModel = require('../models/userModel');
 const typesModel = require('../models/typesModel');
 const donationModel = require('../models/donationModel');
+const supportModel = require('../models/supportModel');
 
 const passwordRegEx =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&^])[A-Za-z\d@.#$!%*?&]{8,28}$/;
 
@@ -318,6 +319,15 @@ exports.show_add_type = function(req, res) {
         loggedIn: false
     })
 }
+exports.show_admin_support = function(req, res) {
+    supportModel.getOpenTickets()
+    .then((types) => {
+        res.render('adminSupport', {
+            rows: types,
+            loggedIn: false,
+        })
+    })
+}
 
 exports.handle_register = function(req, res) {
     const firstname = req.body.firstname;
@@ -342,13 +352,21 @@ exports.handle_register = function(req, res) {
     if (!passwordRegEx.test(password)) {
         message = message + "Password Requirements not met; ";
     }
-    
-    if (message) {
-        return res.status(403).send(message);
-    }
-    userModel.addUser(firstname, surname, DoB.toISOString(), email, password);
+    userModel.findUserByEmail(email, function(err, user) {
 
-    res.redirect('/login');
+        if (user) {
+            message = message + "User with email already exists";
+        }
+
+        if (message) {
+            return res.status(403).send(message);
+        }
+        userModel.addUser(firstname, surname, DoB.toISOString(), email, password);
+
+        res.redirect('/login');
+    })
+    
+    
 }
 exports.handle_login = function(req, res) {
     res.redirect('/home');
@@ -368,12 +386,6 @@ exports.user_home = function(req, res) {
 }
 exports.handle_donate = function(req, res) {
     getUser(req.cookies.jwt, function(err, user) {
-        if (!user) {
-            return res.status(500).send("Error");
-        }
-        if (user.accounttype == 'pantry') {
-            return res.redirect('pantryhome');
-        }
         const typeid = req.body.typeid;
         const userid = user._id;
         const quantity = req.body.quantity;
@@ -388,21 +400,6 @@ exports.handle_donate = function(req, res) {
         if (date<harvestDate) {
             message = message + "Harvest cant be in future; ";
         }
-        getUser(userid, function(err, user) {
-            if (!user) {
-                message = message + "User Does not exist; ";
-            }
-        })
-        getUser(pantryid, function(err, pantry) {
-            if (!pantry) {
-                message = message + "Pantry Does not exist; ";
-            }
-        })
-        typesModel.getTypeById(typeid, function(err, type) {
-            if (!type) {
-                message = message + "Type does not exist; ";
-            }
-        })
 
         if (message) {
             return res.status(403).send(message);
@@ -517,6 +514,25 @@ exports.handle_delete_type = function(req, res) {
     typesModel.removeType(choice);
 
     res.redirect('/admintypes');
+}
+exports.handle_close_ticket = function(req, res) {
+    const choice = req.body.choice;
+    if (!choice) {
+        return res.status(403).send("No Id");
+    }
+    supportModel.closeTicket(choice);
+    res.redirect('/adminsupport');
+}
+exports.handle_create_ticket = function(req, res) {
+    const email = req.body.email;
+    const subject = req.body.subject;
+    const body = req.body.body;
+
+    if (!email || !subject || !body) {
+        return res.status(403).send("Missing Form Data");
+    }
+    supportModel.addTicket(email, subject, body);
+    res.status(200).send("Ticket Sent");
 }
 
 function getUser(token, cb) {
