@@ -23,3 +23,12 @@
 13. Admin can delete any user
 14. Admin can add and remove types
 
+# Login Infromation
+
+All Passwords are "Password123*"
+Pantry 1 - email1@email.com
+Pantry 2 - email2@email.com
+Pantry 3 - email3@email.com
+
+User Account - user@gmail.com
+Admin Account - admin@gmail.com
